@@ -1,0 +1,3 @@
+"id","username","password","role","email"
+"1","owner","12345678","owner","owner@gmail.com"
+"2","penjaga","12345678","penjaga","penjaga@gmail.com"

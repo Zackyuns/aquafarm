@@ -23,7 +23,7 @@ app.use('/api/auth', authRoutes);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors()); // Penting agar frontend bisa akses

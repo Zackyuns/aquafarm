@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const bcrypt = require('bcrypt');
 
 exports.addSchedule = (req, res) => {
   if (req.body.role !== "owner") {
@@ -29,16 +30,21 @@ exports.login = async (req, res) => {
     const user = await User.findByEmail(email);
 
     if (!user) {
-      console.log("User tidak ditemukan");
-      return res.status(401).json({ message: "Email tidak ditemukan" });
+      return res.status(401).json({
+        message: "Email tidak ditemukan"
+      });
     }
 
-    if (user.password !== password) {
-      console.log("Password salah");
-      return res.status(401).json({ message: "Password salah" });
-    }
+    const match = await bcrypt.compare(
+      password,
+      user.password
+    );
 
-    console.log("Login berhasil");
+    if (!match) {
+      return res.status(401).json({
+        message: "Password salah"
+      });
+    }
 
     return res.json({
       message: "Login berhasil",
@@ -46,7 +52,9 @@ exports.login = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("ERROR:", err);
-    return res.status(500).json({ message: "Server error" });
+    console.error(err);
+    return res.status(500).json({
+      message: "Server error"
+    });
   }
 };
