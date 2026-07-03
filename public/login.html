@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Aquafarm Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+
+    <div class="login-container">
+        <div class="login-header">
+            <div class="brand-icon" style="margin: 0 auto 15px auto; width: 48px; height: 48px; font-size: 1.5rem;">
+                <i class="fa-solid fa-water"></i>
+            </div>
+            <h2>Selamat Datang!</h2>
+            <p>Masuk untuk memantau kolam Anda.</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" placeholder="contoh@aquafarm.id" value="" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" placeholder="Masukan kata sandi" value="" required>
+                    <i class="fa-regular fa-eye show-pass"></i>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <label class="checkbox-container">
+                    <input type="checkbox" checked>
+                    <span>Ingat saya</span>
+                </label>
+                <a href="#" class="forgot-pass">Lupa Password?</a>
+            </div>
+
+            <button type="submit" class="btn-login">
+                Masuk Dashboard <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="login-footer">
+            Belum punya akun? <a href="#">Daftar Bro</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+        
+            const btn = document.querySelector('.btn-login');
+        
+            btn.innerHTML = 'Memuat...';
+            btn.disabled = true;
+        
+            const email = document.querySelector('input[type="email"]').value;
+            const password = document.querySelector('input[type="password"]').value;
+        
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+        
+                const data = await res.json();
+        
+                if (!res.ok) {
+                    alert(data.message);
+                    btn.innerHTML = 'Masuk Dashboard';
+                    btn.disabled = false;
+                    return;
+                }
+        
+                // simpan role
+                localStorage.setItem('role', data.role);
+        
+                // redirect
+                window.location.href = 'index.html';
+        
+            } catch (err) {
+                console.error(err);
+                alert('Server tidak merespon');
+                btn.innerHTML = 'Masuk Dashboard';
+                btn.disabled = false;
+            }
+        });
+        </script>
+</body>
+</html>

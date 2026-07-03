@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Drain</title>
+
+    <!-- Font & Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome (WAJIB) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-water"></i>
+            </div>
+            <span>Aquafarm</span>
+        </div>
+
+        <div class="nav-menu">
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-house"></i> Dashboard
+            </a>
+        
+            <a href="feeder.html" class="nav-item">
+                <i class="fa-solid fa-fish"></i> Feed
+            </a>
+        
+            <a href="drain.html" class="nav-item active">
+                <i class="fa-solid fa-faucet-drip"></i> Drain 
+            </a>
+
+            <a href="fill.html" class="nav-item">
+                <i class="fa-solid fa-droplet"></i> Fill 
+            </a>
+        </div>
+        
+        <a href="login.html" class="nav-item logout" onclick="return confirm('Apakah Anda yakin ingin keluar?');">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+        </div>
+        <div
+            style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding-top: 20px; border-top: 1px solid #E2E8F0;">
+            <div style="width: 36px; height: 36px; background: #CBD5E1; border-radius: 50%;"></div>
+            <div style="font-size: 0.85rem;">
+                <div id="userRole">-</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+
+        <!-- HEADER -->
+        <header class="top-header">
+            <div class="page-title">
+                <h2>Auto Drain</h2>
+                <p>Kontrol Air Otomatis Berdasarkan Sensor Turbidity</p>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="content-container">
+
+            <div class="stats-grid">
+
+                <!-- CONTROL MANUAL -->
+                <div class="stat-card">
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                        <div class="stat-icon icon-blue"><i class="fa-solid fa-faucet-drip"></i></div>
+                    </div>
+                    <div class="stat-content">
+                        <div>Manual Control</div>
+                        <div>
+                            Drain Sekarang [Hijau Buka Merah Tutup]
+                        </div>
+                    </div>
+                
+                    <div class="manual-buttons">
+                
+                        <button
+                            onclick="drainOnManual()"
+                            class="btn-kuras btn-on">
+                            ▶ 
+                        </button>
+                
+                        <button
+                            onclick="drainOffManual()"
+                            class="btn-kuras btn-off">
+                            ■ 
+                        </button>
+                
+                    </div>
+                
+                </div>
+
+                <!-- AUTO MODE -->
+                <div class="stat-card">
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                        <div class="stat-icon icon-blue"><i class="fa-solid fa-gear"></i></div>
+                    </div>
+                    <div class="stat-content">
+                        <div>Auto Drain</div>
+                        <div>Aktifkan Berdasarkan Sensor Turbidity [Klik Switch Kanan]</div>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" id="autoDrainSwitch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- NILAI TURBIDITY -->
+                <div class="stat-card">
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                        <div class="stat-icon icon-blue"><i class="fa-solid fa-circle-half-stroke"></i></div>
+                    </div>
+                    <div class="stat-content">
+                        <div>Kekeruhan Air</div>
+                        <div id="turbidityPercent" style="font-weight:700;"><span id="drainTurbidity">--</span> %</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+
+        async function drainOnManual() {
+        
+            const role =
+            localStorage.getItem("role");
+        
+            if (role !== "owner") {
+        
+                alert("Hanya pemilik ❌");
+                return;
+        
+            }
+        
+            await fetch(
+                "/api/manual-relay/drain",
+                {
+                    method:"POST"
+                }
+            );
+        
+            alert("Drain dijalankan 💧");
+        
+        }
+        
+        async function drainOffManual() {
+        
+            const role =
+            localStorage.getItem("role");
+        
+            if (role !== "owner") {
+        
+                alert("Hanya pemilik ❌");
+                return;
+        
+            }
+        
+            await fetch(
+                "/api/manual-relay/reset-drain",
+                {
+                    method:"POST"
+                }
+            );
+        
+            alert("Drain dimatikan 💧");
+        
+        }
+        
+        </script>
+        <script>
+            const role = localStorage.getItem("role");
+        
+            const roleText = document.getElementById("userRole");
+        
+            if (role === "owner") {
+                roleText.innerText = "Pemilik Kolam";
+            } else if (role === "penjaga") {
+                roleText.innerText = "Penjaga Kolam";
+            } else {
+                roleText.innerText = "User";
+            }
+        
+            if (role === "owner") {
+            roleText.innerText = "Pemilik Kolam";
+            roleText.style.color = "#2563eb"; // biru
+        } else {
+            roleText.innerText = "Penjaga Kolam";
+            roleText.style.color = "#16a34a"; // hijau
+        }
+        
+        if (role === "penjaga") {
+            document.getElementById("btnTambah").style.display = "none";
+        }
+        
+        if (role === "penjaga") {
+            document.getElementById("btnFeed").style.display = "none";
+        }
+        
+        if (role === "penjaga") {
+            document.getElementById("btnDrainOn").disabled = true;
+            document.getElementById("btnDrainOff").disabled = true;
+        }
+        </script>
+
+<script>
+
+    async function loadAutoDrainStatus() {
+    
+        try {
+    
+            const res =
+            await fetch(
+                "/api/auto/status"
+            );
+    
+            const data =
+            await res.json();
+    
+            document
+            .getElementById(
+                "autoDrainSwitch"
+            ).checked =
+            data.auto_drain == 1;
+    
+        }
+        catch(err) {
+    
+            console.log(err);
+    
+        }
+    
+    }
+    
+    loadAutoDrainStatus();
+    
+    </script>
+
+<script>
+
+    document
+    .getElementById("autoDrainSwitch")
+    .addEventListener("change", async (e) => {
+    
+        await fetch(
+            "/api/auto/drain",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                    "application/json"
+                },
+                body: JSON.stringify({
+                    enabled:
+                    e.target.checked ? 1 : 0
+                })
+            }
+        );
+    
+    });
+    
+    </script>
+</body>
+</html>

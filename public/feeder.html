@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Drain & Fill</title>
+
+    <!-- Font & Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome (WAJIB) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR (SAMA) -->
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-water"></i>
+            </div>
+            <span>Aquafarm</span>
+        </div>
+
+        <div class="nav-menu">
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-house"></i> Dashboard
+            </a>
+        
+            <a href="feeder.html" class="nav-item active">
+                <i class="fa-solid fa-fish"></i> Feed
+            </a>
+        
+            <a href="drain.html" class="nav-item">
+                <i class="fa-solid fa-faucet-drip"></i> Drain 
+            </a>
+
+            <a href="fill.html" class="nav-item">
+                <i class="fa-solid fa-droplet"></i> Fill 
+            </a>
+        </div>
+        
+        <a href="login.html" class="nav-item logout" onclick="return confirm('Apakah Anda yakin ingin keluar?');">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+        </div>
+        <div
+            style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding-top: 20px; border-top: 1px solid #E2E8F0;">
+            <div style="width: 36px; height: 36px; background: #CBD5E1; border-radius: 50%;"></div>
+            <div style="font-size: 0.85rem;">
+                <div id="userRole">-</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+
+        <header class="top-header">
+
+            <div class="page-title">
+                <h2>Auto Feed</h2>
+                <p>Kontrol Pakan Otomatis Berdasarkan Jadwal</p>
+            </div>
+
+        </header>
+
+        <div class="content-container">
+
+            <!-- CARD CONTROL -->
+            <div class="stat-card" style="margin-bottom:20px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                    <div class="stat-icon icon-blue"><i class="fa-solid fa-fish"></i></div>
+                </div>
+                <div class="stat-content">
+                    <div>Manual Control</div>
+                    <div>Feed Sekarang</div>
+                </div>
+                
+                <button onclick="feedNowManual()" class="btn-kuras btn-on">
+                    ▶ Feed
+                </button>
+            </div>
+
+            <!-- CARD STATUS -->
+            <div class="stat-card" style="margin-bottom:20px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                    <div class="stat-icon icon-blue"><i class="fa-solid fa-calendar-days"></i></div>
+                </div>
+                <div class="stat-content">
+                    <div>Auto Feed</div>
+                    <div id="feederStatusText">Aktifkan berdasarkan jadwal pakan</div>
+                </div>
+            </div>
+
+            <!-- CARD SCHEDULE -->
+            <div class="stat-card" style="margin-bottom:20px;">
+
+    <div style="
+        width:100%;
+    ">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        ">
+
+            <h3 style="margin:0;">Jadwal Pakan</h3>
+
+            <div style="
+                display:flex;
+                align-items:center;
+                gap:15px;
+            ">
+
+                <button id="addScheduleBtn"
+                    style="
+                        background:#2962ff;
+                        color:white;
+                        border:none;
+                        padding:10px 16px;
+                        border-radius:10px;
+                        cursor:pointer;
+                        font-weight:600;
+                    ">
+                    + Tambah
+                </button>
+
+            </div>
+
+        </div>
+
+        <div id="scheduleList" style="margin-top:20px;"></div>
+
+    </div>
+
+</div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        async function feedNowManual() {
+        
+            const role = localStorage.getItem("role");
+        
+            if (role !== "owner") {
+        
+                alert("Hanya pemilik ❌");
+                return;
+        
+            }
+        
+            await fetch(
+                "/api/feeder/feed",
+                {
+                    method: "POST"
+                }
+            );
+        
+            alert("Memberi pakan ikan 🐟");
+        
+        }
+    </script>
+
+<div id="addScheduleModal"
+    style="
+        display:none;
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.5);
+        justify-content:center;
+        align-items:center;
+        z-index:9999;
+    ">
+
+    <div
+        style="
+            background:white;
+            padding:25px;
+            border-radius:16px;
+            width:350px;
+        ">
+
+        <h3 style="margin-bottom:20px;">Tambah Jadwal Baru</h3>
+
+        <label>Waktu</label>
+        <input type="time" id="inputTime"
+            style="
+                width:100%;
+                padding:10px;
+                margin-top:8px;
+                margin-bottom:20px;
+            ">
+
+        <div style="
+            display:flex;
+            justify-content:flex-end;
+            gap:10px;
+        ">
+
+            <button id="btnCancelModal"
+                style="
+                    padding:10px 16px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                ">
+                Batal
+            </button>
+
+            <button id="btnSaveSchedule"
+                style="
+                    padding:10px 16px;
+                    background:#2962ff;
+                    color:white;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                ">
+                Simpan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+    
+        const modal = document.getElementById("addScheduleModal");
+        const btnOpen = document.getElementById("addScheduleBtn");
+        const btnClose = document.getElementById("btnCancelModal");
+    
+        // buka modal
+        btnOpen.addEventListener("click", () => {
+    
+            modal.style.display = "flex";
+    
+        });
+    
+        // tutup modal
+        btnClose.addEventListener("click", () => {
+    
+            modal.style.display = "none";
+    
+        });
+    
+    });
+    
+    </script>
+
+    <script>
+        const role = localStorage.getItem("role");
+    
+        const roleText = document.getElementById("userRole");
+    
+        if (role === "owner") {
+            roleText.innerText = "Pemilik Kolam";
+        } else if (role === "penjaga") {
+            roleText.innerText = "Penjaga Kolam";
+        } else {
+            roleText.innerText = "User";
+        }
+    
+        if (role === "owner") {
+        roleText.innerText = "Pemilik Kolam";
+        roleText.style.color = "#2563eb"; // biru
+    } else {
+        roleText.innerText = "Penjaga Kolam";
+        roleText.style.color = "#16a34a"; // hijau
+    }
+    
+    if (role === "penjaga") {
+        document.getElementById("btnTambah").style.display = "none";
+    }
+    
+    if (role === "penjaga") {
+        document.getElementById("btnFeed").style.display = "none";
+    }
+    
+    if (role === "penjaga") {
+        document.getElementById("btnDrainOn").disabled = true;
+        document.getElementById("btnDrainOff").disabled = true;
+    }
+    </script>
+</body>
+</html>

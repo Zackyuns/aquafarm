@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aquafarm Pro Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-water"></i></div>
+            
+            <span>Aquafarm</span>
+        </div>
+
+        <div class="nav-menu">
+            <a href="index.html" class="nav-item active">
+                <i class="fa-solid fa-house"></i> Dashboard
+            </a>
+        
+            <a href="feeder.html" class="nav-item">
+                <i class="fa-solid fa-fish"></i> Feed
+            </a>
+        
+            <a href="drain.html" class="nav-item">
+                <i class="fa-solid fa-faucet-drip"></i> Drain 
+            </a>
+
+            <a href="fill.html" class="nav-item">
+                <i class="fa-solid fa-droplet"></i> Fill 
+            </a>
+        </div>
+        
+            <a href="login.html" class="nav-item logout" onclick="return confirm('Apakah Anda yakin ingin keluar?');">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
+
+        <div
+            style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding-top: 20px; border-top: 1px solid #E2E8F0;">
+            <div style="width: 36px; height: 36px; background: #CBD5E1; border-radius: 50%;"></div>
+            <div style="font-size: 0.85rem;">
+                <div id="userRole">-</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main-wrapper">
+
+        <header class="top-header">
+            <div class="page-title">
+                <div class="brand brand-mobile" style="font-size: 1rem; margin-bottom: 0;">
+                    <div class="brand-icon" style="width:28px; height:28px; font-size:0.9rem;"><i
+                            class="fa-solid fa-water"></i></div>
+                    Aquafarm
+                </div>
+                <h2 class="desktop-only-title" style="margin-top: 4px;">Dashboard Utama</h2>
+                <p>Status terkini: <span style="color: var(--success); font-weight: 600;">Online (Live Data)</span></p>
+            </div>
+
+            <div class="header-actions">
+               
+            </div>
+        </header>
+
+        <div class="content-container">
+
+            <div class="dashboard-grid">
+
+                <div class="hero-card temp-optimal" id="cardSuhu">
+                    <div>
+                        <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px; color: var(--secondary);">Kekeruhan Air Rata-rata</div>
+
+                        <div class="temp-wrapper">
+                            <div class="temp-val" id="displaySuhu"><span id="displayTurbidity">--</span>%</div>
+                        </div>
+
+                        <div
+                            style="margin-top: 15px; font-size: 0.9rem; display: flex; gap: 8px; align-items: center; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; width: fit-content;">
+                            <i class="fa-solid fa-circle-check" id="statusIcon"></i>
+                            <span id="statusText" style="font-weight: 500; color: var(--secondary);">Kondisi Ideal</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-temperature-half hero-bg-icon"></i>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div style="font-size: 0.85rem; color: var(--secondary);">pH Air</div>
+                            <div style="display: flex; align-items: baseline; gap: 5px; margin-top: 4px;">
+                                <span id="phValue" style="font-weight: 700; font-size: 1.5rem;">7.0</span>
+                            </div>
+                            <div id="phStatus" style="font-size: 0.8rem; font-weight: 600; margin-top: 4px;">
+                                </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                            <div class="stat-icon icon-blue"><i class="fa-solid fa-flask"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Kuras / Drain Card -->
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div style="font-size: 0.85rem; color: var(--secondary);">Jarak Ketinggian Air</div>
+                            <div id="waterLevel"
+                                style="font-weight: 700; font-size: 1.1rem; margin-top: 4px; transition: 0.3s;">--</div>
+                                <div id="turbidityStatus" style="font-size: 0.8rem; font-weight: 600; margin-top: 4px;">
+                                    </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                            <div class="stat-icon icon-blue"><i class="fa-solid fa-ruler-vertical"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            </section>
+
+        <div class="chart-section">
+            <div class="section-header">
+                <h3 style="font-size: 1rem;">Grafik Kekeruhan Air Realtime</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="realtimeChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <button class="fab-mobile" onclick="feedNowManual()">
+        <i class="fa-solid fa-bowl-food"></i> Beri Pakan Sekarang
+    </button>
+
+    <!-- External Script for API calls -->
+    <script src="script.js"></script>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+            });
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+        }
+    </script>
+<script>
+    const role = localStorage.getItem("role");
+
+    const roleText = document.getElementById("userRole");
+
+    if (role === "owner") {
+        roleText.innerText = "Pemilik Kolam";
+    } else if (role === "penjaga") {
+        roleText.innerText = "Penjaga Kolam";
+    } else {
+        roleText.innerText = "User";
+    }
+
+    if (role === "owner") {
+    roleText.innerText = "Pemilik Kolam";
+    roleText.style.color = "#2563eb"; // biru
+} else {
+    roleText.innerText = "Penjaga Kolam";
+    roleText.style.color = "#16a34a"; // hijau
+}
+
+if (role === "penjaga") {
+    document.getElementById("btnTambah").style.display = "none";
+}
+
+if (role === "penjaga") {
+    document.getElementById("btnFeed").style.display = "none";
+}
+
+if (role === "penjaga") {
+    document.getElementById("btnDrainOn").disabled = true;
+    document.getElementById("btnDrainOff").disabled = true;
+}
+</script>
+</body>
+
+</html>
