@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // 1. KONFIGURASI API
   // ==========================================
 
-  const BASE_URL = "http://10.146.77.144:3000";
+  const BASE_URL = "https://aquafarm-two.vercel.app";
 
   const API_URLS = {
     monitor: `${BASE_URL}/api/feeder/data?limit=1`,

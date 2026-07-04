@@ -23,8 +23,6 @@ app.use('/api/auth', authRoutes);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const PORT = process.env.PORT || 4000;
-
 // Middleware
 app.use(cors()); // Penting agar frontend bisa akses
 app.use(bodyParser.json()); // Agar bisa baca JSON dari ESP
@@ -43,6 +41,12 @@ app.get('/', (req, res) => {
 });
 
 // Jalankan Server
-app.listen(PORT, () => {
-    console.log(`Server berjalan di http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+
+if (process.env.NODE_ENV !== "production") {
+    app.listen(PORT, () => {
+        console.log(`Server running on ${PORT}`);
+    });
+}
+
+module.exports = app;
