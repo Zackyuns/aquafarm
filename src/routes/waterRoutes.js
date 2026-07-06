@@ -1,53 +1,20 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-// Menyimpan data terakhir di memory
-let latestWater = {
-    waterLevel: 0,
-    updatedAt: null
-};
+const WaterController = require('../controllers/waterController');
 
-// ===============================
-// ESP32 KIRIM DATA
-// POST /api/water/log
-// ===============================
-router.post("/log", (req, res) => {
+// ESP32 kirim data
+router.post('/log', WaterController.receiveData);
 
-    console.log("DATA WATER MASUK:", req.body);
+// Frontend ambil semua data
+router.get('/data', WaterController.getData);
 
-    latestWater.waterLevel = req.body.value;
-    latestWater.updatedAt = new Date();
+// Frontend ambil data terbaru
+router.get('/latest', WaterController.getLatest);
 
-    res.json({
-        success: true,
-        message: "Data water level tersimpan",
-        data: latestWater
-    });
-
-});
-
-// ===============================
-// DASHBOARD AMBIL DATA TERBARU
-// GET /api/water/latest
-// ===============================
-router.get("/latest", (req, res) => {
-
-    res.json({
-        success: true,
-        waterLevel: latestWater.waterLevel,
-        updatedAt: latestWater.updatedAt
-    });
-
-});
-
-// ===============================
-// TEST ROUTE
-// GET /api/water
-// ===============================
-router.get("/", (req, res) => {
-
+// Test route
+router.get('/', (req, res) => {
     res.send("Water API Running");
-
 });
 
 module.exports = router;
