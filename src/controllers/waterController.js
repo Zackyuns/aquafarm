@@ -52,21 +52,23 @@ const WaterController = {
     async getLatest(req, res) {
 
         try {
-
+    
             const data = await WaterModel.getLatest();
-
-            res.json(data);
-
+    
+            res.json({
+                success: true,
+                waterLevel: data.value,
+                updatedAt: data.created_at
+            });
+    
         } catch (err) {
-
-            console.error(err);
-
+    
             res.status(500).json({
                 success: false
             });
-
+    
         }
-
+    
     }
 
 };
