@@ -1,15 +1,66 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const TurbidityController = require('../controllers/turbidityController');
+// Menyimpan data terakhir di memory
+let latestTurbidity = {
+    turbidity: 0,
+    updatedAt: null
+};
 
-// ESP kirim data
-router.post('/log', TurbidityController.receiveData);
+// ===============================
+// ESP32 KIRIM DATA
+// POST /api/turbidity/log
+// ===============================
+router.post("/log", (req, res) => {
 
-// Frontend ambil data
-router.get('/data', TurbidityController.getData);
+    console.log("DATA TURBIDITY MASUK:", req.body);
 
-// Data terbaru
-router.get('/latest', TurbidityController.getLatest);
+    latestTurbidity.turbidity = req.body.turbidity;
+    latestTurbidity.updatedAt = new Date();
+
+    res.json({
+        success: true,
+        message: "Data turbidity tersimpan",
+        data: latestTurbidity
+    });
+
+});
+
+// ===============================
+// DASHBOARD AMBIL DATA TERBARU
+// GET /api/turbidity/latest
+// ===============================
+router.get("/latest", (req, res) => {
+
+    res.json({
+        success: true,
+        turbidity: latestTurbidity.turbidity,
+        updatedAt: latestTurbidity.updatedAt
+    });
+
+});
+
+// ===============================
+// DASHBOARD AMBIL DATA
+// GET /api/turbidity/data
+// ===============================
+router.get("/data", (req, res) => {
+
+    res.json({
+        success: true,
+        data: latestTurbidity
+    });
+
+});
+
+// ===============================
+// TEST ROUTE
+// GET /api/turbidity
+// ===============================
+router.get("/", (req, res) => {
+
+    res.send("Turbidity API Running");
+
+});
 
 module.exports = router;
